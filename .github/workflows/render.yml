@@ -1,0 +1,42 @@
+name: Render stories
+
+# Renders every story in stories/ (or the ones you name) to videos, Shorts,
+# subtitles and thumbnails, and attaches them to the run. Run it by hand from
+# the Actions tab, or let it run when a story changes.
+
+on:
+  workflow_dispatch:
+    inputs:
+      stories:
+        description: "Story files (space-separated)"
+        default: "stories/*.json"
+      formats:
+        description: "landscape, vertical, square, portrait or all"
+        default: "landscape,vertical"
+  push:
+    branches: [main]
+    paths: ["stories/**.json"]
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # Google Chrome is already on GitHub's Ubuntu runners; Chromium is the fallback.
+      - run: npx playwright install chromium
+      - name: Render
+        run: >
+          node cli/datalapse.mjs render ${{ github.event.inputs.stories || 'stories/*.json' }}
+          --format ${{ github.event.inputs.formats || 'landscape,vertical' }}
+          --text --thumbs --out out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: videos
+          path: out

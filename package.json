@@ -1,0 +1,63 @@
+{
+  "name": "datalapse",
+  "version": "0.2.0",
+  "description": "Turn a CSV into an animated data-documentary video (bar chart races, maps, bubbles and more), entirely in your browser.",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "homepage": "https://himanshuafmc.github.io/datalapse/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/himanshuafmc/datalapse.git"
+  },
+  "bugs": {
+    "url": "https://github.com/himanshuafmc/datalapse/issues"
+  },
+  "bin": {
+    "datalapse": "cli/datalapse.mjs"
+  },
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "test": "node tests/unit.test.mjs",
+    "parity": "python3 tests/parity_check.py",
+    "verify": "node tools/build.mjs && node tests/verify_ui.mjs",
+    "check": "npm test && npm run parity && npm run verify",
+    "stories": "python3 tools/export_stories.py",
+    "fonts": "python3 tools/subset_fonts.py",
+    "fixtures": "python3 tests/make_fixtures.py",
+    "render": "node cli/datalapse.mjs render",
+    "world": "node tools/build_world.mjs"
+  },
+  "dependencies": {
+    "gifenc": "1.0.3",
+    "mp4-muxer": "5.2.2",
+    "webm-muxer": "5.1.4"
+  },
+  "devDependencies": {
+    "countries-list": "^3.1.1",
+    "esbuild": "0.25.10",
+    "flag-icons": "^7.2.3",
+    "i18n-iso-countries": "^7.14.0",
+    "playwright": "1.56.0",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  },
+  "keywords": [
+    "accessibility",
+    "bar-chart-race",
+    "canvas",
+    "csv",
+    "data-visualization",
+    "gif",
+    "map",
+    "no-install",
+    "shorts",
+    "subtitles",
+    "video",
+    "webcodecs",
+    "youtube"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

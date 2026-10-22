@@ -1,0 +1,8 @@
+node_modules/
+dist/
+tests/screenshots/
+__pycache__/
+*.pyc
+reference/python/raw/
+reference/python/out/
+.DS_Store

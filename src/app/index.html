@@ -1,0 +1,111 @@
+<title>Datalapse</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Make bar chart races and data-story videos in your browser. Free, open source, nothing to install, your data never leaves your device.">
+<style>/*__CSS__*/</style>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="6" width="22" height="5" rx="1.5"/><rect x="3" y="13.5" width="17" height="5" rx="1.5"/><rect x="3" y="21" width="11" height="5" rx="1.5"/><path d="M27.5 4v24" /></svg>
+      <span class="wordmark">Data<b>lapse</b></span>
+    </div>
+    <div class="story-pick">
+      <label for="story-select" class="visually-hidden">Story</label>
+      <select id="story-select"></select>
+    </div>
+    <form id="cmd-form" class="cmd" role="search" autocomplete="off">
+      <label for="cmd" class="visually-hidden">Tell Datalapse what to change</label>
+      <input id="cmd" type="text" list="cmd-examples" placeholder="Tell Datalapse what to change, e.g. make India saffron" spellcheck="false">
+      <datalist id="cmd-examples"></datalist>
+    </form>
+    <nav class="actions" aria-label="Story actions">
+      <button type="button" id="btn-csv" class="btn">New from CSV</button>
+      <button type="button" id="btn-ai" class="btn">Ask your AI</button>
+      <label for="lang-select" class="visually-hidden">Preview language</label>
+      <select id="lang-select" class="mini-select" hidden></select>
+      <div class="seg mini" role="radiogroup" aria-label="Preview format">
+        <button type="button" role="radio" data-fmt="landscape" aria-checked="true" title="16:9 for YouTube">16:9</button>
+        <button type="button" role="radio" data-fmt="vertical" aria-checked="false" title="9:16 for Shorts, Reels and TikTok">9:16</button>
+        <button type="button" role="radio" data-fmt="square" aria-checked="false" title="1:1 for Instagram, LinkedIn and X">1:1</button>
+        <button type="button" role="radio" data-fmt="portrait" aria-checked="false" title="4:5 for Instagram and Facebook feeds">4:5</button>
+      </div>
+      <button type="button" id="btn-undo" class="icon-btn" aria-label="Undo" title="Undo (Ctrl+Z)" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7H5V3M5.5 7.5A8 8 0 1 1 4 13"/></svg></button>
+      <button type="button" id="btn-redo" class="icon-btn" aria-label="Redo" title="Redo (Ctrl+Shift+Z)" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 7h4V3M18.5 7.5A8 8 0 1 0 20 13"/></svg></button>
+      <button type="button" id="btn-export" class="btn primary">Publish</button>
+    </nav>
+  </header>
+
+  <main class="workspace">
+    <aside class="scenes" aria-labelledby="scenes-h">
+      <div class="pane-head"><h2 id="scenes-h">Scenes</h2><span id="story-length" class="tnum"></span></div>
+      <ol id="scene-list" class="scene-list"></ol>
+      <div class="add-scene">
+        <label for="add-type" class="visually-hidden">Scene type to add</label>
+        <select id="add-type"></select>
+        <button type="button" id="btn-add" class="btn small">Add scene</button>
+      </div>
+    </aside>
+
+    <section class="stage-col" aria-label="Preview">
+      <div class="stage" id="stage" data-fmt="landscape">
+        <canvas id="canvas" width="960" height="540" aria-label="Video preview"></canvas>
+        <div id="stage-error" class="stage-error" hidden></div>
+      </div>
+      <div class="transport">
+        <button type="button" id="btn-play" class="play" aria-label="Play" title="Play or pause (Space)">
+          <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+          <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z"/></svg>
+        </button>
+        <span class="tc" id="tc">00:00:00</span>
+        <div class="scrub" id="scrub" role="slider" tabindex="0" aria-label="Playhead" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
+          <div class="segments" id="segments"></div>
+          <div class="cues" id="cues" aria-hidden="true"></div>
+          <div class="head" id="head" aria-hidden="true"></div>
+        </div>
+        <span class="tc dim" id="tc-total">00:00:00</span>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+    </section>
+
+    <aside class="inspector" aria-label="Editor">
+      <div class="tabs" role="tablist" aria-label="Editor sections">
+        <button type="button" role="tab" data-tab="scene" aria-selected="true" aria-controls="panel-scene">Scene</button>
+        <button type="button" role="tab" data-tab="story" aria-selected="false" aria-controls="panel-story" tabindex="-1">Story</button>
+        <button type="button" role="tab" data-tab="data" aria-selected="false" aria-controls="panel-data" tabindex="-1">Data</button>
+        <button type="button" role="tab" data-tab="audio" aria-selected="false" aria-controls="panel-audio" tabindex="-1">Audio</button>
+        <button type="button" role="tab" data-tab="json" aria-selected="false" aria-controls="panel-json" tabindex="-1">JSON</button>
+      </div>
+      <div class="tab-panel" id="panel-scene" role="tabpanel"></div>
+      <div class="tab-panel" id="panel-story" role="tabpanel" hidden></div>
+      <div class="tab-panel" id="panel-data" role="tabpanel" hidden></div>
+      <div class="tab-panel" id="panel-audio" role="tabpanel" hidden></div>
+      <div class="tab-panel" id="panel-json" role="tabpanel" hidden></div>
+    </aside>
+  </main>
+
+  <footer class="foot">
+    <span>Free and open source (MIT). Runs entirely in your browser: your data and videos never leave this device.</span>
+    <span>/*__REPO__*/</span>
+  </footer>
+</div>
+
+<dialog id="wizard" aria-labelledby="wizard-h">
+  <div class="dlg-head"><h2 id="wizard-h">New story from a CSV</h2><button type="button" class="icon-btn dlg-close" aria-label="Close">×</button></div>
+  <div id="wizard-body" class="dlg-body"></div>
+</dialog>
+<dialog id="ai" aria-labelledby="ai-h">
+  <div class="dlg-head"><h2 id="ai-h">Ask your AI to write the story</h2><button type="button" class="icon-btn dlg-close" aria-label="Close">×</button></div>
+  <div id="ai-body" class="dlg-body"></div>
+</dialog>
+<dialog id="cmd-dialog" aria-labelledby="cmd-h">
+  <div class="dlg-head"><h2 id="cmd-h">Make a change</h2><button type="button" class="icon-btn dlg-close" aria-label="Close">×</button></div>
+  <div id="cmd-dialog-body" class="dlg-body"></div>
+</dialog>
+<dialog id="rec-dialog" aria-labelledby="rec-h">
+  <div class="dlg-head"><h2 id="rec-h">Record a line</h2><button type="button" class="icon-btn dlg-close" aria-label="Close">×</button></div>
+  <div id="rec-dialog-body" class="dlg-body"></div>
+</dialog>
+<dialog id="export" aria-labelledby="export-h">
+  <div class="dlg-head"><h2 id="export-h">Publish</h2><button type="button" class="icon-btn dlg-close" aria-label="Close">×</button></div>
+  <div id="export-body" class="dlg-body"></div>
+</dialog>
+<script>/*__JS__*/</script>
